@@ -75,6 +75,7 @@ class SortingRobot:
             return -1
         else:
             return 0
+            
 
     def set_light_on(self):
         """
@@ -92,11 +93,64 @@ class SortingRobot:
         """
         return self._light == "ON"
 
+    # def walk_and_sort(self):
+        #If right < item
+        # if robot.can_move_right() and (robot.compare_item() == 1 or robot.compare_item() is None) and robot.can_move_left():
+        #     robot.swap_item()
+        #     robot.move_left()
+        #     print("Swapped, now I'm at __ with __ ", self._position, self._item)
+        #     self.walk_and_sort()
+        # #If right-item is > item
+        # elif robot.can_move_right():
+        #     robot.move_right()
+        #     print("Moved, now I'm at __ with __ ", self._position, self._item)
+        #     self.walk_and_sort()
+        # else:
+        #     print(robot.compare_item(), robot.can_move_right())
+        #     print("Help!!", self._position, self._item)
+
+    def insertion_sort(self):
+        while self._position != 0:
+            self.move_left()
+        # if self._list[self._position+1] < self._list[self._position]:
+        #     self.move_right()
+        #     self.swap_item()
+
+        while self.light_is_on() and self._position != len(self._list)-1:
+        # if list number to the right of robot > list number in front of robot, move 1 to the right.
+            if self._list[self._position+1] > self._list[self._position]:
+                self.move_right()
+            # if list number to the right of robot SMALLER than list number in front of robot, begin the swap.
+            elif self._list[self._position+1] < self._list[self._position]:
+                self.move_right()
+                self.swap_item()
+                #Move to the left until robot finds the correct place or it reaches the start
+                while self._position != 0 and (self._list[self._position-1] > self._item):
+                    self.move_left()
+                #Then keep moving right & swapping numbers to re-order the sorted list until picking up 'None' again.
+                while self._item is not None:
+                    self.swap_item()
+                    self.move_right()
+            self.check_if_sorted()
+
+
+    def check_if_sorted(self):
+        if self._position == len(self._list)-1:
+            while self._position != 0 and (self._list[self._position-1] < self._list[self._position]):
+                self.move_left()
+            if self._list[self._position] == 0:
+                self.set_light_off()
+            else: 
+                self.insertion_sort()   
+
     def sort(self):
         """
         Sort the robot's list.
         """
-        # Fill this out
+        print(self._list)
+        self.set_light_on()
+        self.insertion_sort()
+        print(self._list)
         pass
 
 
@@ -107,6 +161,8 @@ if __name__ == "__main__":
     l = [15, 41, 58, 49, 26, 4, 28, 8, 61, 60, 65, 21, 78, 14, 35, 90, 54, 5, 0, 87, 82, 96, 43, 92, 62, 97, 69, 94, 99, 93, 76, 47, 2, 88, 51, 40, 95, 6, 23, 81, 30, 19, 25, 91, 18, 68, 71, 9, 66, 1, 45, 33, 3, 72, 16, 85, 27, 59, 64, 39, 32, 24, 38, 84, 44, 80, 11, 73, 42, 20, 10, 29, 22, 98, 17, 48, 52, 67, 53, 74, 77, 37, 63, 31, 7, 75, 36, 89, 70, 34, 79, 83, 13, 57, 86, 12, 56, 50, 55, 46]
 
     robot = SortingRobot(l)
+    print(robot._list)
+    print(robot.light_is_on())
 
     robot.sort()
-    print(robot._list)
+    print("End: ", robot._list)
